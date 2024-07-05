@@ -13,6 +13,7 @@ export class WeatherService {
   static ICON_URL =
     "https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-hdpi/";
   private currentConditions = signal<ConditionsAndZip[]>([]);
+  private wrongZipCode = signal<string>("");
 
   constructor(private http: HttpClient) {}
 
@@ -21,16 +22,24 @@ export class WeatherService {
       .get<CurrentConditions>(
         `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`
       )
-      .subscribe((data) => {
-        if (
-          !this.currentConditions().find(
-            (zd: ConditionsAndZip) => zd.zip === zipcode
+
+      .subscribe(
+        (data) => {
+          if (
+            !this.currentConditions().find(
+              (zd: ConditionsAndZip) => zd.zip === zipcode
+            )
           )
-        )
-          this.currentConditions.update((conditions) => {
-            return [...conditions, { zip: zipcode, data }];
-          });
-      });
+            this.currentConditions.update((conditions) => {
+              return [...conditions, { zip: zipcode, data }];
+            });
+        },
+        (error) => {
+          console.log(error);
+          console.log(zipcode);
+          this.wrongZipCode.update((v) => zipcode);
+        }
+      );
   }
 
   removeCurrentConditions(zipcode: string) {
@@ -44,6 +53,10 @@ export class WeatherService {
 
   getCurrentConditions(): Signal<ConditionsAndZip[]> {
     return this.currentConditions.asReadonly();
+  }
+
+  getErrorZipCode(): Signal<string> {
+    return this.wrongZipCode.asReadonly();
   }
 
   getForecast(zipcode: string): Observable<Forecast> {

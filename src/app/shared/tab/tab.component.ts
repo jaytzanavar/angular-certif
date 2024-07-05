@@ -13,18 +13,16 @@ import {
 })
 export class TabComponent {
   @Input() id: number;
-  @Input() title: string;
-  @Input() zip: string;
+  @Input() tab_title: string;
   @Output() selectTab: EventEmitter<number> = new EventEmitter<number>();
-  @Output() removeTab: EventEmitter<string> = new EventEmitter<string>();
+  @Output() removeTab: EventEmitter<number> = new EventEmitter<number>();
 
   @HostListener("click", ["$event"])
   onHostClick(event: Event) {
-    console.log("the zip is clicked", this.zip);
     this.selectTab.next(this.id);
   }
   deleteTab(zip): void {
     // locationService.removeLocation(location.zip);
-    this.removeTab.next(this.zip);
+    this.removeTab.next(this.id);
   }
 }

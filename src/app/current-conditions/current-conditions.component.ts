@@ -22,27 +22,29 @@ export class CurrentConditionsComponent {
   protected locationService = inject(LocationService);
   protected currentConditionsByZip: Signal<ConditionsAndZip[]> =
     this.weatherService.getCurrentConditions();
-
   protected currentLocations: Signal<string[]> =
     this.locationService.getCurrentLocations();
 
-  protected selectedTab = signal(0);
+  protected selectedLocationCardTab = signal(0);
 
-  selectedLocationCardTab: Signal<ConditionsAndZip> = computed(
-    () => this.currentConditionsByZip()[this.selectedTab()]
-  );
+  protected errorZipCode: Signal<string> =
+    this.weatherService.getErrorZipCode();
 
   constructor() {
     effect(() => {
+      console.log(this.currentLocations());
       this.currentLocations().map((zip) => {
         this.weatherService.addCurrentConditions(zip);
       });
     });
+
+    effect(() => {
+      console.log(this.errorZipCode());
+      if (this.errorZipCode())
+        this.locationService.removeLocation(this.errorZipCode(), true);
+    });
   }
 
-  ngAfterViewInit() {
-    console.log(this.selectedLocationCardTab());
-  }
   showForecast(zipcode: string) {
     this.router.navigate(["/forecast", zipcode]);
   }
@@ -52,14 +54,25 @@ export class CurrentConditionsComponent {
   }
 
   changeWeatherTab(index: number) {
-    this.selectedTab.set(index);
+    this.selectedLocationCardTab.set(index);
   }
 
-  deleteWeatherTab(zip: string) {
+  deleteWeatherTab(index: number) {
+    const zip = this.currentConditionsByZip()[index].zip;
+    const indexToDelete = this.currentConditionsByZip().findIndex(
+      (x) => x.zip === zip
+    );
+    console.log(indexToDelete);
+
     this.weatherService.removeCurrentConditions(zip);
     this.locationService.removeLocation(zip);
-    this.selectedTab.update((currentTab) =>
-      currentTab > 0 ? currentTab - 1 : 0
+
+    this.selectedLocationCardTab.set(
+      indexToDelete === 0 ? 0 : indexToDelete - 1
     );
+  }
+
+  tabTitle(name: string, zip: string) {
+    return `${name} (${zip})`;
   }
 }

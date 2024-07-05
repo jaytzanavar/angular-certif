@@ -6,10 +6,8 @@ export const LOCATIONS: string = "locations";
 @Injectable()
 export class LocationService {
   locations: string[] = [];
-  private currentLocations = signal<string[]>([]);
 
-  // We need something to inform that a location is updated when the list
-  // is changed
+  private currentLocations = signal<string[]>([]);
 
   // private weatherService : WeatherService
   constructor() {
@@ -18,8 +16,6 @@ export class LocationService {
       this.locations = JSON.parse(locString);
       this.currentLocations.update(() => [...JSON.parse(locString)]);
     }
-    // for (let loc of this.locations)
-    //   this.weatherService.addCurrentConditions(loc);
   }
 
   addLocation(zipcode: string) {
@@ -32,14 +28,16 @@ export class LocationService {
     //  this.weatherService.addCurrentConditions(zipcode);
   }
 
-  removeLocation(zipcode: string) {
+  removeLocation(zipcode: string, error: boolean = false) {
     let index = this.locations.indexOf(zipcode);
     if (index !== -1) {
       this.locations.splice(index, 1);
       localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-      this.currentLocations.update((loc) =>
-        loc.filter((l_zipcode) => l_zipcode !== zipcode)
-      );
+      console.log("loc", zipcode);
+      if (!error)
+        this.currentLocations.update((loc) =>
+          loc.filter((l_zipcode) => l_zipcode !== zipcode)
+        );
       // this.weatherService.removeCurrentConditions(zipcode);
     }
   }
