@@ -1,7 +1,38 @@
-.close {
-  cursor: pointer;
-}
 .flex {
   display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  margin-right: 5px;
+}
+
+.tab-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 40px;
+}
+
+app-card-header {
+  width: 100%;
+  background: rgb(30, 152, 168);
+  color: white;
+  font-size: 2.5rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+}
+
+app-card-main {
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  display: flex;
   justify-content: space-between;
+}
+
+app-card-main h4 {
+  font-size: 2.2rem;
+}
+
+app-card-main p {
+  font-size: 2rem;
+}
+
+app-card-footer {
+  padding: 1rem 1.5rem 1rem 1.5rem;
 }

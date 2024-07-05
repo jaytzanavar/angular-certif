@@ -1,33 +1,50 @@
-import { Injectable } from '@angular/core';
-import {WeatherService} from "./weather.service";
+import { Injectable, signal } from "@angular/core";
+import { WeatherService } from "./weather.service";
 
-export const LOCATIONS : string = "locations";
+export const LOCATIONS: string = "locations";
 
 @Injectable()
 export class LocationService {
+  locations: string[] = [];
+  private currentLocations = signal<string[]>([]);
 
-  locations : string[] = [];
+  // We need something to inform that a location is updated when the list
+  // is changed
 
-  constructor(private weatherService : WeatherService) {
+  // private weatherService : WeatherService
+  constructor() {
     let locString = localStorage.getItem(LOCATIONS);
-    if (locString)
+    if (locString) {
       this.locations = JSON.parse(locString);
-    for (let loc of this.locations)
-      this.weatherService.addCurrentConditions(loc);
+      this.currentLocations.update(() => [...JSON.parse(locString)]);
+    }
+    // for (let loc of this.locations)
+    //   this.weatherService.addCurrentConditions(loc);
   }
 
-  addLocation(zipcode : string) {
-    this.locations.push(zipcode);
-    localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-    this.weatherService.addCurrentConditions(zipcode);
+  addLocation(zipcode: string) {
+    if (this.locations.indexOf(zipcode) === -1) {
+      this.locations.push(zipcode);
+      localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
+      this.currentLocations.update((loc) => [...loc, zipcode]);
+    }
+
+    //  this.weatherService.addCurrentConditions(zipcode);
   }
 
-  removeLocation(zipcode : string) {
+  removeLocation(zipcode: string) {
     let index = this.locations.indexOf(zipcode);
-    if (index !== -1){
+    if (index !== -1) {
       this.locations.splice(index, 1);
       localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-      this.weatherService.removeCurrentConditions(zipcode);
+      this.currentLocations.update((loc) =>
+        loc.filter((l_zipcode) => l_zipcode !== zipcode)
+      );
+      // this.weatherService.removeCurrentConditions(zipcode);
     }
+  }
+
+  getCurrentLocations() {
+    return this.currentLocations.asReadonly();
   }
 }

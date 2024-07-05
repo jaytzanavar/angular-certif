@@ -1,0 +1,22 @@
+:host {
+  background: rgba(57, 147, 231, 0.836);
+  color: white;
+  min-width: 160px;
+  max-height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 15px 0px 15px;
+  border: 1px solid rgb(182, 182, 182);
+}
+
+:host:hover {
+  background: rgba(127, 185, 240, 0.836);
+  cursor: pointer;
+}
+
+.close {
+  margin-left: 20px;
+  cursor: pointer;
+  color: white;
+}
