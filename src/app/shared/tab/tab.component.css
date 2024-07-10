@@ -2,6 +2,7 @@
   background: rgba(57, 147, 231, 0.836);
   color: white;
   min-width: 160px;
+  min-height: 40px;
   max-height: 50px;
   display: flex;
   justify-content: space-between;
@@ -11,7 +12,7 @@
 }
 
 :host:hover {
-  background: rgba(127, 185, 240, 0.836);
+  background: rgba(127, 185, 240, 0.836) !important;
   cursor: pointer;
 }
 

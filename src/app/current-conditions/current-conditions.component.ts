@@ -20,26 +20,29 @@ export class CurrentConditionsComponent {
   private weatherService = inject(WeatherService);
   private router = inject(Router);
   protected locationService = inject(LocationService);
+  public selectedTab = 0;
   protected currentConditionsByZip: Signal<ConditionsAndZip[]> =
     this.weatherService.getCurrentConditions();
   protected currentLocations: Signal<string[]> =
     this.locationService.getCurrentLocations();
-
   protected selectedLocationCardTab = signal(0);
 
   protected errorZipCode: Signal<string> =
     this.weatherService.getErrorZipCode();
 
   constructor() {
-    effect(() => {
-      console.log(this.currentLocations());
-      this.currentLocations().map((zip) => {
-        this.weatherService.addCurrentConditions(zip);
-      });
-    });
+    effect(
+      () => {
+        this.currentLocations().map((zip) => {
+          this.weatherService.addCurrentConditions(zip);
+        });
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
 
     effect(() => {
-      console.log(this.errorZipCode());
       if (this.errorZipCode())
         this.locationService.removeLocation(this.errorZipCode(), true);
     });
@@ -54,7 +57,17 @@ export class CurrentConditionsComponent {
   }
 
   changeWeatherTab(index: number) {
+    this.selectedTab = index;
     this.selectedLocationCardTab.set(index);
+  }
+
+  selectTabStyle(index: number) {
+    return {
+      "background-color":
+        index === this.selectedTab
+          ? "rgba(127, 185, 240, 0.836)"
+          : "rgba(57, 147, 231, 0.836)",
+    };
   }
 
   deleteWeatherTab(index: number) {

@@ -24,8 +24,6 @@ export class LocationService {
       localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
       this.currentLocations.update((loc) => [...loc, zipcode]);
     }
-
-    //  this.weatherService.addCurrentConditions(zipcode);
   }
 
   removeLocation(zipcode: string, error: boolean = false) {

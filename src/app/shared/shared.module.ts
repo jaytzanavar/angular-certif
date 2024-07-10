@@ -5,6 +5,7 @@ import { CardHeaderDirective } from "./card-header.directive";
 import { TabComponent } from "./tab/tab.component";
 import { CardComponent } from "./card/card.component";
 import { CardMainDirective } from "./card-main.directive";
+import { SelectedTab } from "./directives/selected-tab.directive";
 
 @NgModule({
   imports: [CommonModule],
@@ -12,6 +13,7 @@ import { CardMainDirective } from "./card-main.directive";
     CardFooterDirective,
     CardHeaderDirective,
     CardMainDirective,
+    SelectedTab,
     TabComponent,
     CardComponent,
   ],
@@ -19,6 +21,7 @@ import { CardMainDirective } from "./card-main.directive";
     CommonModule,
     TabComponent,
     CardComponent,
+    SelectedTab,
     CardHeaderDirective,
     CardMainDirective,
     CardFooterDirective,

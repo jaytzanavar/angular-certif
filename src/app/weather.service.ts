@@ -1,5 +1,5 @@
 import { Injectable, Signal, signal } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 
 import { HttpClient } from "@angular/common/http";
 import { CurrentConditions } from "./current-conditions/current-conditions.type";
@@ -18,28 +18,60 @@ export class WeatherService {
   constructor(private http: HttpClient) {}
 
   addCurrentConditions(zipcode: string): void {
-    this.http
-      .get<CurrentConditions>(
-        `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`
-      )
+    const requestUrl = `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`;
+    const currentDateInSeconds = new Date().getTime() / 1000;
 
-      .subscribe(
+    const persistedCache = JSON.parse(
+      localStorage.getItem("persistCache")
+    ) as Array<any>;
+    console.log(requestUrl);
+    const requestCached =
+      persistedCache &&
+      persistedCache.find((cached_data) => cached_data.key === requestUrl);
+    // CHECK CACHE WITH
+
+    if (requestCached && requestCached.expiresAt >= currentDateInSeconds) {
+      const {
+        expiresAt,
+        response: { body },
+      } = requestCached;
+
+      if (requestCached.expiresAt >= currentDateInSeconds) {
+        const currentConditions = body as CurrentConditions;
+        if (
+          !this.currentConditions().find(
+            (zd: ConditionsAndZip) => zd.zip === zipcode
+          )
+        ) {
+          this.currentConditions.update((conditions) => {
+            return [...conditions, { zip: zipcode, data: currentConditions }];
+          });
+        }
+
+        // this.currentConditions.set((conditions) => {
+        //   return [...conditions, { zip: zipcode, requestCached.response.body }];
+        // });
+      }
+    } else {
+      this.http.get<CurrentConditions>(requestUrl).subscribe(
         (data) => {
+          console.log("the data");
+          console.log(data);
           if (
             !this.currentConditions().find(
               (zd: ConditionsAndZip) => zd.zip === zipcode
             )
-          )
+          ) {
             this.currentConditions.update((conditions) => {
               return [...conditions, { zip: zipcode, data }];
             });
+          }
         },
         (error) => {
-          console.log(error);
-          console.log(zipcode);
           this.wrongZipCode.update((v) => zipcode);
         }
       );
+    }
   }
 
   removeCurrentConditions(zipcode: string) {
@@ -61,9 +93,30 @@ export class WeatherService {
 
   getForecast(zipcode: string): Observable<Forecast> {
     // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
-    return this.http.get<Forecast>(
-      `${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`
-    );
+    const requestUrl = `${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`;
+    const currentDateInSeconds = new Date().getTime() / 1000;
+
+    const persistedCache = JSON.parse(
+      localStorage.getItem("persistCache")
+    ) as Array<any>;
+
+    const requestCached =
+      persistedCache &&
+      persistedCache.find((cached_data) => cached_data.key === requestUrl);
+    if (requestCached && requestCached.expiresAt >= currentDateInSeconds) {
+      const {
+        expiresAt,
+        response: { body },
+      } = requestCached;
+
+      if (expiresAt >= currentDateInSeconds) {
+        const currentConditions = body as Forecast;
+
+        return of(currentConditions);
+      }
+    } else {
+      return this.http.get<Forecast>(requestUrl);
+    }
   }
 
   getWeatherIcon(id): string {

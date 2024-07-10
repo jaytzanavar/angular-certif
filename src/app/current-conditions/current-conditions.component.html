@@ -12,9 +12,17 @@
         [tab_title]="tabTitle(location.data.name, location.zip)"
         (selectTab)="changeWeatherTab($event)"
         (removeTab)="deleteWeatherTab($event)"
+        [ngStyle]="selectTabStyle(i)"
       ></app-tab>
     </ng-container>
   </div>
+  <ng-template
+    [ngIf]="currentConditionsByZip() && currentConditionsByZip().length >= 4"
+  >
+    <div class="extra-tabs">
+      {{ currentConditionsByZip().length }}
+    </div>
+  </ng-template>
   <ng-template
     [ngIf]="currentConditionsByZip() && currentConditionsByZip().length === 0"
     [ngIfElse]="card"

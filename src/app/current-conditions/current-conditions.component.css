@@ -3,12 +3,31 @@
   flex-direction: column;
   /* justify-content: space-between; */
   margin-right: 5px;
+  max-width: 52vh;
+  position: relative;
 }
 
 .tab-container {
   display: flex;
   flex-direction: row;
   min-height: 40px;
+  overflow-x: hidden;
+}
+
+.extra-tabs {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  background: rgb(30, 152, 168);
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 12px;
+  padding: 4px;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 2px 7px 0px;
 }
 
 app-card-header {

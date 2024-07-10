@@ -21,7 +21,7 @@ export class TabComponent {
   onHostClick(event: Event) {
     this.selectTab.next(this.id);
   }
-  deleteTab(zip): void {
+  deleteTab(): void {
     // locationService.removeLocation(location.zip);
     this.removeTab.next(this.id);
   }
