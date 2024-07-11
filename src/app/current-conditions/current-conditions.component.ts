@@ -17,16 +17,16 @@ import { ConditionsAndZip } from "../conditions-and-zip.type";
   styleUrls: ["./current-conditions.component.css"],
 })
 export class CurrentConditionsComponent {
-  private weatherService = inject(WeatherService);
   private router = inject(Router);
+  private weatherService = inject(WeatherService);
   protected locationService = inject(LocationService);
+
   public selectedTab = 0;
   protected currentConditionsByZip: Signal<ConditionsAndZip[]> =
     this.weatherService.getCurrentConditions();
   protected currentLocations: Signal<string[]> =
     this.locationService.getCurrentLocations();
   protected selectedLocationCardTab = signal(0);
-
   protected errorZipCode: Signal<string> =
     this.weatherService.getErrorZipCode();
 
@@ -75,7 +75,6 @@ export class CurrentConditionsComponent {
     const indexToDelete = this.currentConditionsByZip().findIndex(
       (x) => x.zip === zip
     );
-    console.log(indexToDelete);
 
     this.weatherService.removeCurrentConditions(zip);
     this.locationService.removeLocation(zip);

@@ -10,6 +10,7 @@ import {
   selector: "[seletedTab]",
 })
 export class SelectedTab {
+  // this code is redundant just made for POC purposes
   constructor(private el: ElementRef, private renderer: Renderer2) {}
   @Input() seletedTab!: {
     tabIndex: number;

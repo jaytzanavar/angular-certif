@@ -31,7 +31,6 @@ export class LocationService {
     if (index !== -1) {
       this.locations.splice(index, 1);
       localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-      console.log("loc", zipcode);
       if (!error)
         this.currentLocations.update((loc) =>
           loc.filter((l_zipcode) => l_zipcode !== zipcode)

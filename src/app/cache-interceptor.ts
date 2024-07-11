@@ -15,23 +15,23 @@ import { tap } from "rxjs/operators";
 export class CacheInterceptor implements HttpInterceptor {
   peristCache = [];
   private cache = new Map<string, CacheTimedData<HttpResponse<any>>>();
-  private cacheDurationService = inject(CacheDurationService);
+  private cacheDurationService = inject(CacheDurationService); // dependent on DurationService can be modified from outside
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const url = request.url;
+    const key = request.url; // setting the generic key as url
     const requestType = request.method;
     // test for 2 seconds :)
     // this.cacheDurationService.setCacheDuration(2);
     const currentDateInSeconds = new Date().getTime() / 1000;
 
-    if (this.cache.has(url) && requestType === "GET") {
-      const cachedResponse = this.cache.get(url);
+    if (this.cache.has(key) && requestType === "GET") {
+      const cachedResponse = this.cache.get(key);
 
       if (
         cachedResponse &&
-        this.cache.get(url).expiresAt >= currentDateInSeconds
+        this.cache.get(key).expiresAt >= currentDateInSeconds
       ) {
         return of(cachedResponse.response);
       }
@@ -78,13 +78,6 @@ export class CacheInterceptor implements HttpInterceptor {
     }
   }
 }
-
-const createPersistCache = (key, value) => {
-  if (localStorage.getItem(key)) {
-  } else {
-    localStorage.setItem(key, JSON.parse(value));
-  }
-};
 
 export type CacheTimedData<T> = {
   response: T;

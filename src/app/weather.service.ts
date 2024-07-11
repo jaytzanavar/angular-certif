@@ -24,11 +24,10 @@ export class WeatherService {
     const persistedCache = JSON.parse(
       localStorage.getItem("persistCache")
     ) as Array<any>;
-    console.log(requestUrl);
+
     const requestCached =
       persistedCache &&
       persistedCache.find((cached_data) => cached_data.key === requestUrl);
-    // CHECK CACHE WITH
 
     if (requestCached && requestCached.expiresAt >= currentDateInSeconds) {
       const {
@@ -47,16 +46,10 @@ export class WeatherService {
             return [...conditions, { zip: zipcode, data: currentConditions }];
           });
         }
-
-        // this.currentConditions.set((conditions) => {
-        //   return [...conditions, { zip: zipcode, requestCached.response.body }];
-        // });
       }
     } else {
       this.http.get<CurrentConditions>(requestUrl).subscribe(
         (data) => {
-          console.log("the data");
-          console.log(data);
           if (
             !this.currentConditions().find(
               (zd: ConditionsAndZip) => zd.zip === zipcode
