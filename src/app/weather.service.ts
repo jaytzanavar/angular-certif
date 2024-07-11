@@ -1,10 +1,11 @@
 import { Injectable, Signal, signal } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 
 import { HttpClient } from "@angular/common/http";
 import { CurrentConditions } from "./current-conditions/current-conditions.type";
 import { ConditionsAndZip } from "./conditions-and-zip.type";
 import { Forecast } from "./forecasts-list/forecast.type";
+import { catchError } from "rxjs/operators";
 
 @Injectable()
 export class WeatherService {
@@ -48,22 +49,30 @@ export class WeatherService {
         }
       }
     } else {
-      this.http.get<CurrentConditions>(requestUrl).subscribe(
-        (data) => {
-          if (
-            !this.currentConditions().find(
-              (zd: ConditionsAndZip) => zd.zip === zipcode
-            )
-          ) {
-            this.currentConditions.update((conditions) => {
-              return [...conditions, { zip: zipcode, data }];
-            });
+      this.http
+        .get<CurrentConditions>(requestUrl)
+        .pipe(
+          catchError((error) => {
+            // TODO: elegant handle of the async error
+            return throwError(error);
+          })
+        )
+        .subscribe(
+          (data) => {
+            if (
+              !this.currentConditions().find(
+                (zd: ConditionsAndZip) => zd.zip === zipcode
+              )
+            ) {
+              this.currentConditions.update((conditions) => {
+                return [...conditions, { zip: zipcode, data }];
+              });
+            }
+          },
+          (error) => {
+            this.wrongZipCode.set(zipcode);
           }
-        },
-        (error) => {
-          this.wrongZipCode.update((v) => zipcode);
-        }
-      );
+        );
     }
   }
 
@@ -82,6 +91,10 @@ export class WeatherService {
 
   getErrorZipCode(): Signal<string> {
     return this.wrongZipCode.asReadonly();
+  }
+
+  initializeErrorZipCode(): void {
+    this.wrongZipCode.set("");
   }
 
   getForecast(zipcode: string): Observable<Forecast> {

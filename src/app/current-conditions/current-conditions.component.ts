@@ -30,6 +30,9 @@ export class CurrentConditionsComponent {
   protected errorZipCode: Signal<string> =
     this.weatherService.getErrorZipCode();
 
+  // TODO: Move template to zipcode form for aesthetic reasons
+  showErrorMessage = false;
+
   constructor() {
     effect(
       () => {
@@ -41,11 +44,22 @@ export class CurrentConditionsComponent {
         allowSignalWrites: true,
       }
     );
-
-    effect(() => {
-      if (this.errorZipCode())
-        this.locationService.removeLocation(this.errorZipCode(), true);
-    });
+    // gets signal if wrong zip code was added to remove it
+    effect(
+      () => {
+        if (this.errorZipCode()) {
+          this.locationService.removeLocation(this.errorZipCode(), true);
+          this.showErrorMessage = true;
+          setTimeout(() => {
+            this.showErrorMessage = false;
+            this.weatherService.initializeErrorZipCode();
+          }, 3000);
+        }
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
   }
 
   showForecast(zipcode: string) {

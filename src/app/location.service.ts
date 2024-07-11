@@ -31,10 +31,8 @@ export class LocationService {
     if (index !== -1) {
       this.locations.splice(index, 1);
       localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-      if (!error)
-        this.currentLocations.update((loc) =>
-          loc.filter((l_zipcode) => l_zipcode !== zipcode)
-        );
+      this.currentLocations.update((loc) => [...this.locations]);
+
       // this.weatherService.removeCurrentConditions(zipcode);
     }
   }

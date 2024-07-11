@@ -24,7 +24,6 @@ export class SelectedTab {
       "backgroundColor",
       "rgba(57, 147, 231, 0.836)"
     );
-    console.log("this is the selected tab index", this.seletedTab);
     if (tabIndex === selectedIndex)
       this.renderer.setStyle(
         this.el.nativeElement,

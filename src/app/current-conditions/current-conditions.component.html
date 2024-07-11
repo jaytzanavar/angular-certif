@@ -1,3 +1,6 @@
+<ng-template [ngIf]="showErrorMessage">
+  <p style="color: crimson">Zip code not valid !</p>
+</ng-template>
 <div class="flex">
   <div class="tab-container">
     <ng-container
@@ -16,6 +19,7 @@
       ></app-tab>
     </ng-container>
   </div>
+  <!-- badge for more than 3tabs-->
   <ng-template
     [ngIf]="currentConditionsByZip() && currentConditionsByZip().length >= 4"
   >
@@ -23,6 +27,7 @@
       {{ currentConditionsByZip().length }}
     </div>
   </ng-template>
+  <!-- Default can make use of control flow @if for empty or alt with @for @empty -->
   <ng-template
     [ngIf]="currentConditionsByZip() && currentConditionsByZip().length === 0"
     [ngIfElse]="card"
@@ -43,7 +48,6 @@
       <app-card-main
         *ngIf="currentConditionsByZip()[selectedLocationCardTab()]"
       >
-        <!-- {{ selectedLocationCardTab() | json }} -->
         <div>
           <h4>
             Current conditions:
