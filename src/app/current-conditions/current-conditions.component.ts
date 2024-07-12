@@ -9,7 +9,7 @@ import {
 import { WeatherService } from "../weather.service";
 import { LocationService } from "../location.service";
 import { Router } from "@angular/router";
-import { ConditionsAndZip } from "../conditions-and-zip.type";
+import { ConditionsAndZip } from "../shared/types/conditions-and-zip.type";
 
 @Component({
   selector: "app-current-conditions",

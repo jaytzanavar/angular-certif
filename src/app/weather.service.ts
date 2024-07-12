@@ -3,9 +3,10 @@ import { Observable, of, throwError } from "rxjs";
 
 import { HttpClient } from "@angular/common/http";
 import { CurrentConditions } from "./current-conditions/current-conditions.type";
-import { ConditionsAndZip } from "./conditions-and-zip.type";
+import { ConditionsAndZip } from "./shared/types/conditions-and-zip.type";
 import { Forecast } from "./forecasts-list/forecast.type";
 import { catchError } from "rxjs/operators";
+import { CacheConditionsType } from "./shared/types/cache-conditions-type";
 
 @Injectable()
 export class WeatherService {
@@ -24,7 +25,7 @@ export class WeatherService {
 
     const persistedCache = JSON.parse(
       localStorage.getItem("persistCache")
-    ) as Array<any>;
+    ) as Array<CacheConditionsType>;
 
     const requestCached =
       persistedCache &&
@@ -104,7 +105,7 @@ export class WeatherService {
 
     const persistedCache = JSON.parse(
       localStorage.getItem("persistCache")
-    ) as Array<any>;
+    ) as Array<CacheConditionsType>;
 
     const requestCached =
       persistedCache &&

@@ -14,12 +14,12 @@ import { tap } from "rxjs/operators";
 @Injectable()
 export class CacheInterceptor implements HttpInterceptor {
   peristCache = [];
-  private cache = new Map<string, CacheTimedData<HttpResponse<any>>>();
+  private cache = new Map<string, CacheTimedData<HttpResponse<unknown>>>();
   private cacheDurationService = inject(CacheDurationService); // dependent on DurationService can be modified from outside
   intercept(
-    request: HttpRequest<any>,
+    request: HttpRequest<unknown>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<unknown>> {
     const key = request.url; // setting the generic key as url
     const requestType = request.method;
     // test for 2 seconds :)
@@ -37,7 +37,7 @@ export class CacheInterceptor implements HttpInterceptor {
       }
       // Safety case that cache is empty
       return next.handle(request).pipe(
-        tap((res: HttpResponse<any>) => {
+        tap((res: HttpResponse<unknown>) => {
           if (res instanceof HttpResponse) {
             this.cache.set(request.url, {
               response: res,
@@ -51,7 +51,7 @@ export class CacheInterceptor implements HttpInterceptor {
     } else {
       // Http request we are checking first localstorage
       return next.handle(request).pipe(
-        tap((res: HttpResponse<any>) => {
+        tap((res: HttpResponse<unknown>) => {
           if (res instanceof HttpResponse) {
             this.peristCache.push({
               key: request.url,
